@@ -27,7 +27,7 @@ namespace limelib
          */
         Pose2D toDegrees() const
         {
-            return Pose2D(x, y, theta * 180 / M_PI);
+            return Pose2D(x, y, theta * 180.0 / M_PI);
         }
         /**
          * Convert theta between degrees and radians

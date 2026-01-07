@@ -14,7 +14,8 @@ namespace limelib
     public:
         // Allow nullptr construction with default values
         TrackingWheel(pros::Rotation *sensor, real_t diameter = 2, real_t offset = 0);
-        TrackingWheel(pros::MotorGroup *left, pros::MotorGroup *right, real_t diameter = 3.25);
+        TrackingWheel(pros::MotorGroup *left, pros::MotorGroup *right, real_t diameter = 3.25, real_t gearRatio = 1);
+        
         // Return 0 if sensor is nullptr
         real_t getDistanceTravelled();
         void calibrate();
@@ -26,6 +27,7 @@ namespace limelib
         real_t diameter;
         real_t offset;
         real_t lastPos;
+        real_t gearRatio;
         bool isDifferential;
         pros::MotorGroup *left;
         pros::MotorGroup *right;

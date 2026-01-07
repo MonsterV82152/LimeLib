@@ -11,6 +11,7 @@
 #include "pros/rtos.hpp"
 #include "pros/screen.hpp"
 #include "pros/misc.hpp"
+#include "pros/llemu.hpp"
 #include <memory>
 
 namespace limelib
@@ -41,11 +42,11 @@ namespace limelib
     public:
         // Add virtual destructor
         virtual ~Locator() = default;
-        virtual Pose2D update();
-        virtual void calibrate();
+        virtual Pose2D update() = 0;
+        virtual void calibrate() = 0;
         virtual Pose2D getPose(bool radians = false) const = 0;
-        virtual void setPose(Pose2D pose);
-        virtual void setPose(real_t x, real_t y, real_t theta);
+        virtual void setPose(Pose2D pose, bool radians = false) = 0;
+        virtual void setPose(real_t x, real_t y, real_t theta, bool radians = false) = 0;
         virtual Velocity getVelocity() const = 0;
     };
 
@@ -78,14 +79,14 @@ namespace limelib
          * Set the current pose
          * @param pose Pose2D to set as the current pose
          */
-        void setPose(Pose2D pose) override;
+        void setPose(Pose2D pose, bool radians = false) override;
         /**
          * Set the current pose
          * @param x X coordinate
          * @param y Y coordinate
          * @param theta Heading angle
          */
-        void setPose(real_t x, real_t y, real_t theta) override;
+        void setPose(real_t x, real_t y, real_t theta, bool radians = false) override;
         /**
          * Get the current velocity
          * @return Current Velocity
@@ -95,6 +96,7 @@ namespace limelib
     private:
         TrackingWheel *verticalTW;
         TrackingWheel *horizontalTW;
+        pros::Controller master;
         pros::IMU &imu;
         Pose2D currentPose;
         Pose2D prevPose;
@@ -129,7 +131,7 @@ namespace limelib
          * This creates an MCL localization object using the specified tracking wheels, IMU, distance sensors, and field.
          * It uses 100 particles with 0.1 rotation and translation noise, enables debug display, updates every 10 cycles, and runs in a separate task.
          */
-        MCL(TrackingWheel *verticalTW, TrackingWheel *horizontalTW, pros::Imu &imu, std::vector<MCLDistance> &sensors, Field2D &field, int num_particles, real_t rotationNoise, real_t translationNoise, bool debug = false, int intensitivity = 10, bool shouldTaskRun = true);
+        MCL(TrackingWheel *verticalTW, TrackingWheel *horizontalTW, pros::Imu &imu, std::vector<MCLDistance> &sensors, Field2D &field, int num_particles, real_t translationNoise, bool debug = false, int intensitivity = 10, bool shouldTaskRun = true);
         /**
          * Calibrate the MCL localization system
          */
@@ -149,14 +151,15 @@ namespace limelib
          * Set the current estimated pose
          * @param pose Pose2D to set as the current estimate
          */
-        void setPose(Pose2D pose) override;
+        void setPose(Pose2D pose, bool radians = false) override;
         /**
          * Set the current estimated pose
          * @param x X coordinate
          * @param y Y coordinate
          * @param theta Heading angle
          */
-        void setPose(real_t x, real_t y, real_t theta) override;
+        void setPose(real_t x, real_t y, real_t theta, bool radians = false) override;
+        void setNoise(real_t translationNoise);
         /**
          * Get the current estimated velocity
          * @return Current estimated Velocity
@@ -165,7 +168,6 @@ namespace limelib
 
     private:
         Odometry odomHelper;
-        pros::Controller master;
         std::vector<MCLDistance> &sensors;
         Field2D &field;
         Pose2D odomDelta;
@@ -173,7 +175,6 @@ namespace limelib
         Pose2D actualPose;
         MCLParticle estimatedPose;
         int NUM_PARTICLES;
-        real_t ROTATION_NOISE;
         real_t TRANSLATION_NOISE;
         int INTENSITY;
         int last_mcl_update;

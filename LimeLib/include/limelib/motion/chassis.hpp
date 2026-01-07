@@ -16,13 +16,17 @@ namespace limelib
 {
     /**
      * Parameters for moveToPoint function
+     * Implements LemLib-style motion control with angular priority
      */
     struct moveToPointParams
     {
-        bool forwards = true;
-        real_t maxSpeed = 127;
-        real_t minSpeed = 0;
-        real_t earlyExitRange = 0.0;
+        bool forwards = true;           // Direction of travel
+        real_t maxSpeed = 127;          // Maximum speed (lateral and angular)
+        real_t minSpeed = 0;            // Minimum speed for motion chaining
+        real_t earlyExitRange = 0.0;    // Exit early when within this distance
+        real_t settleDistance = 7.5;    // Distance to start settling (disable turning)
+        real_t driftCompensation = 2.0; // Drift compensation factor (2 for omni, 8 for traction)
+        real_t slew = 0;                // Acceleration limit (0 = disabled)
     };
     /**
      * Parameters for moveToPose function
@@ -62,8 +66,9 @@ namespace limelib
         Chassis(Locator &locator, pros::MotorGroup &leftDr, pros::MotorGroup &rightDr, PID &lateralController, PID &angularController);
         void calibrate();
         void cancelAllMovement();
+        void waitUntilDone();
         void setPose(Pose2D pose);
-        void setPose(real_t x, real_t y, real_t theta);
+        void setPose(real_t x, real_t y, real_t theta, bool radians = false);
         void setPID(PID &linearController, PID &angularController);
         void moveToPoint(Point2D point, int timeout, moveToPointParams params = moveToPointParams());
         void moveToPoint(real_t x, real_t y, int timeout, moveToPointParams params = moveToPointParams());
