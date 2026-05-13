@@ -11,7 +11,6 @@ LimeLib is a high-performance C++ library built on [PROS](https://pros.cs.purdue
 - [Overview](#overview)
 - [Features](#features)
 - [Requirements](#requirements)
-- [Installation](#installation)
 - [Quick Start](#quick-start)
 - [Documentation](#documentation)
   - [Coordinate System](#coordinate-system)
@@ -63,23 +62,6 @@ Key design principles:
 - **VEX Rotation Sensor(s)** or **Motor Groups** — for tracking wheel odometry
 - **VEX Distance Sensors** — optional, required only for MCL
 - C++17 or later (enabled by default in PROS)
-
----
-
-## Installation
-
-1. Download the latest LimeLib template (`.zip`) from the [Releases](../../releases) page.
-2. In your PROS project directory, apply the template:
-
-```bash
-pros c apply limelib@<version>.zip
-```
-
-3. Include the single top-level header in your project:
-
-```cpp
-#include "limelib/limelib.hpp"
-```
 
 ---
 
